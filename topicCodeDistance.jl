@@ -2,7 +2,7 @@ module topicCodeDistance
 
 # not quite right
 function new_digits(x::T)::NTuple{4,T} where {T<:Integer}
-	return ntuple(i -> divrem(x,10^(i-1))[2], 4)
+	return ntuple(i -> divrem(x, 10^(i-1))[2], 4)
 end
 
 # this is an integer-only topic tree distance calculation; no allocations, 3.5-9ns
