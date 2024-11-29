@@ -2,6 +2,28 @@ module topicCodeDistance
 
 export topicCodeTreeDistance
 
+function topicTreeDist(a::T, b::T)::T where {T <: Integer}
+	_a = digits(a); _b = digits(b); d = zero(T);
+	if _a[3] != _b[3]
+		d += 2							# if 100, 200 -> up+down
+		if _a[2] != 0
+			d += 1						# if next digit is non-zero, extra step
+		end
+		if _b[2] != 0
+			d += 1						# if next digit is non-zero, extra step
+		end
+	else
+		if _a[2] != _b[2]		# if 110, 120 ...
+			if _a[1] != 0
+				d += 1					# up
+			end
+			if _b[1] != 0
+				d += 1					# down
+			end
+		end
+	end 
+	return d
+end
 #=
 	We can traverse the tree implicitly by rounding to zero with ever-decreasing 
 	significant digits: e.g. 111 |> 110 |> 100 |> 0 is the repeated application of
@@ -61,8 +83,8 @@ So for:
 However, the topicCodeTreeDistance function does not calculate these values.
 The last case is incorrect with the TreeIterator, as it (correctly!) identifies
 "14" as two sigfigs and not one, so it requires taking b all the way to zero:
-		b = 1415 |> 1410 |> 1400 |> 1000 |> 0
-		a = 110  |> 100 |> 0
+		b = 1415 |> 1410	|> 1400 |> 1000 |> 0
+		a = 110  |>  100	|> 0
 whereas we were implicitly dropping the significance of the digit in the
 thousands place, if the digits in the hundreds place is different for a & b.
 This is not a correct mapping to the tree, but also kind of identifies that the
