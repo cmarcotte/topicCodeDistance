@@ -99,4 +99,26 @@ would yield d = 6, when really we flatten the 14 to be a single "digit", so it's
 a multi-radix number system.
 =#
 
+# this implementation is equivalent to the iterator-based approach above, but 
+# slightly faster (65-80ns).
+@inline roundmap(x::Int; sg::Int=4) = Int(round(x, RoundToZero, sigdigits=sg))
+function dist(a::Int, b::Int)::Int
+	d = zero(Int); __a = a; __b = b;
+	@inbounds for n in 4:-1:0
+		_a = roundmap(a; sg=n)
+		_b = roundmap(b; sg=n)
+		if _a != __a
+			d += one(Int)
+			__a = _a
+		end
+		if _b != __b
+			d += one(Int)
+			__b = _b
+		end
+		if _a == _b
+			return d
+		end
+	end
+end
+
 end
